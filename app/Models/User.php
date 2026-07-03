@@ -12,6 +12,10 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    public const TYPE_STUDENT = 'student';
+    public const TYPE_ADMIN = 'admin';
+    public const TYPE_SUPER_ADMIN = 'super_admin';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -21,6 +25,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'user_type',
+        'is_active',
     ];
 
     /**
@@ -41,5 +47,21 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'is_active' => 'boolean',
     ];
+
+    public function isAdmin(): bool
+    {
+        return in_array($this->user_type, [self::TYPE_ADMIN, self::TYPE_SUPER_ADMIN], true);
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->user_type === self::TYPE_SUPER_ADMIN;
+    }
+
+    public function isStudent(): bool
+    {
+        return $this->user_type === self::TYPE_STUDENT;
+    }
 }
