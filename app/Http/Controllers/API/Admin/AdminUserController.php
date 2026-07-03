@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\StoreAdminUserRequest;
 use App\Http\Requests\Admin\UpdateAdminUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class AdminUserController extends Controller
@@ -21,7 +22,7 @@ class AdminUserController extends Controller
         );
     }
 
-    public function store(StoreAdminUserRequest $request): UserResource
+    public function store(StoreAdminUserRequest $request): JsonResponse
     {
         $data = $request->validated();
 
@@ -33,7 +34,9 @@ class AdminUserController extends Controller
             'is_active' => $data['isActive'] ?? true,
         ]);
 
-        return new UserResource($user);
+        return (new UserResource($user))
+            ->response()
+            ->setStatusCode(201);
     }
 
     public function show(User $adminUser): UserResource
